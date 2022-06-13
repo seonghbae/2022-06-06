@@ -5,7 +5,12 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
 function Header(props) {
-  return <header><h1><a href="/" onClick={(evt) => {
+  const myStyle = {
+    borderBottom: '10px solid grey',
+    padding: '10px',
+    fontSize: '20px'
+  }
+  return <header style={myStyle}><h1><a href="/" onClick={(evt) => {
     evt.preventDefault();
     props.onSelect();
   }}>Web</a></h1></header>
