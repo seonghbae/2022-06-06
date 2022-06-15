@@ -58,13 +58,14 @@ function Create(props) {
 function Read(props) {
   const params = useParams();
   const id = Number(params.topic_id);
-  const topic = props.topics.filter(e => {
-    if(e.id === id) {
-      return true;
-    } else {
-      return false;
-    }
-  })[0];
+  const [topic, setTopic] = useState({title:null, body:null});
+  useEffect(() => {
+    (async () => {
+      const response = await fetch('http://localhost:3333/topics');
+      const data = await response.json();
+      setTopic(data);
+    })();
+  }, [id]);
   return <Article title={topic.title} body={topic.body}></Article>;
 }
 
@@ -92,13 +93,13 @@ function App() {
     {id:1, title:'html', body:'html is ...'},
     {id:2, title:'css', body:'css is ...'},
   ]);
+  const refreshTopics = async () => {
+    const response = await fetch('http://localhost:3333/topics');
+    const data = await response.json();
+    setTopics(data);
+  };
   useEffect(() => {
-    // side effect 작업
-    (async () => {
-      const response = await fetch('http://localhost:3333/topics');
-      const data = await response.json();
-      setTopics(data);
-    })();
+    refreshTopics(); // side effect 작업
   }, []);
   const navigate = useNavigate();
   return (
@@ -130,6 +131,7 @@ function App() {
     });
     const data = await response.json(); // id를 반환하기 때문에 nextId 필요 없어짐
     navigate(`/read/${data.id}`);
+    refreshTopics();
   }
 
   function navHandler() {
