@@ -107,7 +107,7 @@ function App() {
       <Nav data={topics} onSelect={navHandler()}></Nav>
       <Routes>
         <Route path="/" element={<Article title="Welcome" body="Hello, WEB!"></Article>}></Route>
-        <Route path="/create" element={<Create onCreate={onCreateHandler()}></Create>}></Route>
+        <Route path="/create" element={<Create onCreate={onCreateHandler}></Create>}></Route>
         <Route path="/read/:topic_id" element={<Read topics={topics}></Read>}></Route>
       </Routes>
       <Routes>
@@ -120,16 +120,16 @@ function App() {
     </div>
   );
 
-  function onCreateHandler() {
-    return (title, body) => {
-      const newTopic = { id: nextId, title, body };
-      const newTopics = [...topics];
-      newTopics.push(newTopic);
-      setTopics(newTopics);
-      setId(nextId);
-      setMode('READ');
-      setNextId(nextId + 1);
-    };
+  async function onCreateHandler(title, body) {
+    const response = await fetch('http://localhost:3333/topics', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({title, body})
+    });
+    const data = await response.json(); // id를 반환하기 때문에 nextId 필요 없어짐
+    navigate(`/read/${data.id}`);
   }
 
   function navHandler() {
